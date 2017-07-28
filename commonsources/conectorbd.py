@@ -47,3 +47,6 @@ def showError(e):
     print "Error %d: %s" % (e.args[0], e.args[1])
     tkMessageBox.showerror("Error en base de datos", "Error %d: %s" % (e.args[0], e.args[1]))
     sys.exit(1)
+
+def addusr(a,b,c):
+    print a,b,c

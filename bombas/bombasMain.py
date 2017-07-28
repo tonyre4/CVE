@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
-import tkMessageBox
-import sys
 sys.path.append('../commonsources')
 from conectorbd import *
 
@@ -47,7 +45,7 @@ class pswdiag:
         self.top.title("Administrador: Iniciar Sesión")
         #Widgets constantes
         Label(self.top, text="Usuario").grid(column=0,row=0)
-        Label(self.top, text="Contraseña").grid(column=0, row=1,sticky=tk.E)
+        Label(self.top, text="Contraseña").grid(column=0, row=1,sticky=E)
 
         #Widgets
         self.eusr = Entry(self.top)

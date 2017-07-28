@@ -4,10 +4,14 @@ from conectorbd import *
 import tkMessageBox
 
 class pswdiag:
-    def __init__(self,parent):
-        self.top = Toplevel(parent) #Objeto dialog
+    def __init__(self,a,parent):
+        self.parent= parent
+        self.a=a
+
+        self.top = Toplevel(self.parent) #Objeto dialog
         self.top.grab_set()         #Para hacerlo modal
         self.top.title("Administrador: Iniciar Sesión")
+
         #Widgets constantes
         Label(self.top, text="Usuario").grid(column=0,row=0)
         Label(self.top, text="Contraseña").grid(column=0, row=1)
@@ -35,6 +39,7 @@ class pswdiag:
         if ( buscaPass( self.eusr.get() ) == self.epsw.get() ) and not None:
             tkMessageBox.showinfo("Acceso permitido", "Bienvenido")
             self.top.destroy()
+            self.a.inlog()
         else:
             tkMessageBox.showerror("Acceso denegado", "Usuario/contraseña incorrecto")
             self.eusr.delete(0, END)
