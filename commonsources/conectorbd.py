@@ -3,40 +3,68 @@ import MySQLdb as mdb
 import sys
 import tkMessageBox
 
-class DBConn:
-
-    def __init__(self):
-        self.server='localhost'
-        self.user='admin'
-        self.pswd='admin'
-        self.conn = None
-
 def buscaDat(usr,col):
+
+    if usr is not None:
+        l=" WHERE user='%s';" % usr
+    else:
+        l=";"
+
     try:
         con = mdb.connect('localhost', 'root', '85491278', 'IDs')
         cur = con.cursor()
-        cur.execute("SELECT %s FROM users WHERE user='%s';" % (col,usr))
-        data = cur.fetchone()
+        cur.execute("SELECT %s FROM users" % col + l)
+
+        if usr is not None:
+            data = cur.fetchone()
+        else:
+            data = cur.fetchall()
+
         con.close()
+
         if data:
-            return data[0]
+            if usr is not None:
+                return data[0]
+            else:
+                l=[]
+                for i in range(len(data)):
+                    l.append(data[i][0])
+                return l
         else:
             return None
 
     except mdb.Error, e:
         showError(e)
 
-def cambiaDat(usr,ndat,par):
+
+def cambiaDat(usr,par,ndat):
 
     if type(ndat)==str:
-        inst= "UPDATE users SET %s='%s' WHERE user='%s';" % (par,ndat,usr)
+        inst = "UPDATE users SET %s='%s' WHERE user='%s';" % (par,ndat,usr)
     else:
-        inst = "UPDATE users SET %s=%d WHERE user='%s';" % (par, ndat, usr)
+        inst = "UPDATE users SET %s= %d  WHERE user='%s';" % (par, ndat, usr)
+
+    print inst
 
     try:
         con = mdb.connect('localhost', 'root', '85491278', 'IDs')
         cur = con.cursor()
         cur.execute(inst)
+        con.commit()
+        con.close()
+
+    except mdb.Error, e:
+        showError(e)
+
+def borraDat(usr):
+
+    inst = "DELETE FROM users WHERE user='%s';" % usr
+
+    try:
+        con = mdb.connect('localhost', 'root', '85491278', 'IDs')
+        cur = con.cursor()
+        cur.execute(inst)
+        con.commit()
         con.close()
 
     except mdb.Error, e:
@@ -47,21 +75,17 @@ def addusr(usr, psw, lvl):
     try:
         with con:
             cur = con.cursor()
-            print "INSERT INTO users (user,pass,level) VALUES ('%s','%s',%i);"% (usr,psw,lvl)
             cur.execute("INSERT INTO users (user,pass,level) VALUES ('%s','%s',%i);" % (usr,psw,lvl))
             con.commit()
             con.close()
-            print "exito1"
     except Exception:
         sys.exc_clear()
         try:
             with con:
                 cur = con.cursor()
-                print "INSERT INTO users (user,pass,level) VALUES ('%s','%s',%i);"% (usr,psw,lvl)
                 cur.execute("INSERT INTO users (user,pass,level) VALUES ('%s','%s',%i);" % (usr,psw,lvl))
                 con.commit()
                 con.close()
-                print "exito2"
         except mdb.Error, e:
             #sys.exc_clear()
             print e

@@ -10,18 +10,15 @@ class adminctas:
     def __init__(self,parent,lvl):
         self.parent = parent
         self.lvl = "{0:09b}".format(lvl)
-        #self.lvl = "11111111"
+        self.subool = False
+        if self.lvl[0] == '1':
+            self.subool = True  ##Variable de super user
 
         self.top = Toplevel(self.parent)  # Objeto dialog
         self.top.grab_set()  # Para hacerlo modal
         self.top.title("Administrador de cuentas")
 
         self.lf1=LabelFrame(self.top,text= "Nueva cuenta")
-
-        # Widgets constantes
-        Label(self.lf1, text="Nuevo usuario").grid(column=0, row=0)
-        Label(self.lf1, text="Nueva contraseña").grid(column=0, row=1)
-        Label(self.lf1, text="Confirmar contraseña").grid(column=0, row=2)
 
         # Widgets
         self.enusr  = Entry(self.lf1)
@@ -48,11 +45,10 @@ class adminctas:
         # #Frame para que se vea bien
         self.lfx = LabelFrame(self.lf1,text="Permisos")
 
-        if self.lvl[0]=='0':
-            self.subool = False  ##Variable de super user
+
+
+        if not self.subool:
             self.chksu.config(state=DISABLED)
-        else:
-            self.subool = True
 
         for i in range (0,self.q):
             Label(self.lfx, text=self.nombres[i]).grid(column=0, row=i) ##Setea el nombre del permiso
@@ -71,8 +67,10 @@ class adminctas:
                 if self.lvl[(i+1)*2] == '0':
                     self.C[1][i].config(state=DISABLED)
 
-        self.q2+=1
-
+        # Widgets constantes
+        Label(self.lf1, text="Nombre").grid(column=0, row=0)
+        Label(self.lf1, text="Contraseña").grid(column=0, row=1)
+        Label(self.lf1, text="Confirmar").grid(column=0, row=2)
         # Posicionando los widgets
         self.enusr.grid (column=1, row=0, columnspan=2)
         self.enpsw.grid (column=1, row=1, columnspan=2)
@@ -93,29 +91,137 @@ class adminctas:
         ##Recuaddro
         self.lf2 = LabelFrame(self.top, text="Cuenta existente")
 
+        # Widgets
+        self.lusr  = ttk.Combobox(self.lf2, state='readonly', postcommand= self.updl)
+        self.lpss = Entry(self.lf2,show='*') #pass actual
+        if self.subool:
+            self.lpss.config(state=DISABLED)
+        self.cpss = Entry(self.lf2,show='*') #cambio pass
+        self.cpssc = Entry(self.lf2,show='*') #confirmar pass
+        self.chbtn = Button(self.lf2, text="Cambio", command=self.chngusr)
+        self.clrbtn = Button(self.lf2, text="Borrar", command=self.delusr)
+        if not self.subool:
+            self.clrbtn.config(state=DISABLED)
+        self.lblp  = LabelFrame(self.lf2, text= "Permisos")
+        self.usu=BooleanVar()
+        self.usuchk = Checkbutton(self.lf2,text="Super usuario",variable=self.usu)
+        if not self.subool:
+            self.usuchk.config(state=DISABLED)
+
+        #Binds
+        self.lusr.bind("<<ComboboxSelected>>", self.getparms)
+
+
+        self.C2 = [[0 for x in range(self.q)] for y in range(2)]
+        self.Cvar2 = [[0 for x in range(self.q)] for y in range(2)]
+        ##Tabla de permisos
+        for i in range (0,self.q):
+            Label(self.lblp, text=self.nombres[i]).grid(column=0, row=i) ##Setea el nombre del permiso
+
+            self.Cvar2[0][i] = BooleanVar()
+            self.C2[0][i] = Checkbutton(self.lblp, text="Leer", variable=self.Cvar2[0][i], command=self.prmchk2)
+            self.C2[0][i].grid(column=1, row=i)
+
+            self.Cvar2[1][i] = BooleanVar()
+            self.C2[1][i] = Checkbutton(self.lblp, text="Escribir", variable=self.Cvar2[1][i], command=self.prmchk2)
+            self.C2[1][i].grid(column=2, row=i)
+
+            if not self.subool:  # checa si es su
+                if self.lvl[(i * 2) + 1] == '0':
+                    self.C2[0][i].config(state=DISABLED)
+                if self.lvl[(i + 1) * 2] == '0':
+                    self.C2[1][i].config(state=DISABLED)
+
         # Widgets constantes
         Label(self.lf2, text="Usuario").grid(column=0, row=0)
-
-        # Widgets
-        self.lusr  = ttk.Combobox(self.lf2, state='readonly')
-        self.ceeusr = Entry(self.lf2)
-        self.chbtn = Button(self.lf2, text="Cambio", command=self.oa)
-        self.upbtn = Button(self.lf2, text="Actualizar", command=self.oa)
-
+        Label(self.lf2, text="Cont. Actual").grid(column=0, row=1)
+        Label(self.lf2, text="Contraseña").grid(column=0, row=2)
+        Label(self.lf2, text="Confirmar").grid(column=0, row=3)
         # Posicionando los widgets
-        self.lusr.grid(column=1, row=0, columnspan=2)
-        self.ceeusr.grid(column=2,row=1)
-        self.chbtn.grid(column=1, row=2)
-        self.upbtn.grid(column=2, row=2)
+        self.lusr.grid  (column=1, row=0, columnspan=3)
+        self.lpss.grid  (column=1, row=1, columnspan=3)
+        self.cpss.grid  (column=1, row=2, columnspan=3)
+        self.cpssc.grid (column=1, row=3, columnspan=3)
+        self.lblp.grid  (column=0, row=4, columnspan=4)
+        self.usuchk.grid(column=0, row=5)
+        self.clrbtn.grid(column=2, row=5)
+        self.chbtn.grid (column=3, row=5)
 
         self.lf2.grid()
 
 
-    def oa(self):
-        print self.ceeusr.get()
-        print type(self.ceeusr.get())
+
+##############################################################
+    ##############FUNCIONES DE CUENTA EXISTENTE
+
+    def updl(self):
+        self.lusr['values'] = buscaDat(None,"user")
+
+    def getparms(self,*args):
+        u=self.lusr.get()
+        l='{0:09b}'.format(buscaDat(u,"level"))
+        print l
+
+        self.usuchk.deselect()
+        for i in range(0, self.q):
+            self.C2[0][i].deselect()
+            self.C2[1][i].deselect()
+
+        if l[0]=='1':
+            self.usuchk.select()
+        else:
+            for i in range (0,self.q):
+                if l[(i*2)+1]=='1':
+                    self.C2[0][i].select()
+                if l[(i+1)*2]=='1':
+                    self.C2[1][i].select()
+
+    def chngusr(self):
+        u,pa,pn,pnc= self.lusr.get(),self.lpss.get(),self.cpss.get(),self.cpssc.get()
+        l=self.glvl(self.usu.get(),self.Cvar2)
+
+        r = tkMessageBox.askyesno("Cambio en usuario", "Estas seguro de hacerle un cambio a la cuenta '%s'?" % u )
+
+        if r:
+            if not self.subool: #CHECA CONTRASEÑA ACTUAL
+                if buscaDat(u,"pass")!=pa:
+                    print "La pass actual no cuadra"
+                    tkMessageBox.showerror("Error de autenticación","La contraseña actual de la cuenta no es correcta")
+                    return
+            if not (pn=="" and pnc==""):
+                print "checando contraseñas"
+                if pn != pnc :
+                    print "las contraseñas no son iguales"
+                    tkMessageBox.showerror("Error de confirmacion","Las contraseñas no coinciden")
+                    return
+                else:
+                    print "Cambiando pass"
+                    cambiaDat(u,"pass",pn)
+
+            if l==0:
+                tkMessageBox.showerror("Error de permisos", "No se puede dejar una cuenta sin permisos")
+            else:
+                cambiaDat(u,"level",l)
+
+    def delusr(self):
+        u = self.lusr.get()
+        if not u=="":
+            r= tkMessageBox.askyesno("Borrado de cuenta","Estas seguro de borrar al usuario '%s'?" % u)
+            if r:
+                borraDat(u)
+
+##############################################################
+##############################################################
 
 
+
+
+
+
+
+
+###############################################################################################
+#FUNCIONES DE NUEVA CUENTA
     def nuborrar(self,a):
         if a:
             for i in range (0,self.q):
@@ -133,14 +239,7 @@ class adminctas:
 
     def nucrear(self,*args):
         ##GENERADOR DE NIVEL
-        l = 0
-        if self.chk.get():
-            l += 1 << self.q * 2
-        else:
-            for i in range(self.q):
-                l += self.Cvar[0][i].get() << 7 - (i * 2)
-                l += self.Cvar[1][i].get() << 7 - (i * 2) - 1
-            ####################
+        l = self.glvl(self.chk.get(),self.Cvar)
 
         if l==0:
             tkMessageBox.showerror("Error de cuenta", "No puede ser creada una cuenta sin permisos")
@@ -168,6 +267,12 @@ class adminctas:
                 self.C[0][i].deselect()
                 self.C[1][i].deselect()
 
+    def prmchk2(self): ##Checa parametros de leer y escribir
+        for i in range(self.q):
+            if not self.Cvar2[0][i].get() and self.Cvar2[1][i].get():
+                self.C2[0][i].deselect()
+                self.C2[1][i].deselect()
+
     def chkchks(self):
         if self.chk.get():
             x=DISABLED
@@ -177,3 +282,18 @@ class adminctas:
             self.C[0][i].config(state=x)
             self.C[1][i].config(state=x)
 
+###############################################################################################
+###############################################################################################
+
+
+###################################################
+        #FUNCIONES COMUNES
+    def glvl(self,su,C):  #Genera nivel
+        l=0
+        if su:
+            l += 1 << self.q * 2
+        else:
+            for i in range(self.q):
+                l += C[0][i].get() << 7 - (i * 2)
+                l += C[1][i].get() << 7 - (i * 2) - 1
+        return l

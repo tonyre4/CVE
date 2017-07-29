@@ -24,4 +24,4 @@ class userData:
         self.logeado = True
         self.usr = "admin"
         self.psw = "admin"
-        self.lvl = 511
+        self.lvl = 2
