@@ -36,7 +36,7 @@ class pswdiag:
         self.eusr.focus()
 
     def compare(self,*args):
-        if ( buscaPass( self.eusr.get() ) == self.epsw.get() ) and not None:
+        if ( buscaDat( self.eusr.get() ) == self.epsw.get() , 'pass' ) and not None:
             tkMessageBox.showinfo("Acceso permitido", "Bienvenido")
             self.top.destroy()
             self.a.inlog()

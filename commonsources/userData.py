@@ -12,7 +12,7 @@ class userData:
     def defineUPL(self,usr,psw):
         self.usr = usr
         self.psw = psw
-        self.lvl = buscaLvl(self.usr)
+        self.lvl = buscaDat(self.usr,'level')
 
     def printall (self):
         print ("Logueado = ", self.logeado)
