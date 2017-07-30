@@ -25,3 +25,21 @@ class userData:
         self.usr = "admin"
         self.psw = "admin"
         self.lvl = 256
+
+
+from Tkinter import *
+
+
+def CENTRE(win,width=300, height=200):
+    # get screen width and height
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+
+    # calculate position x and y coordinates
+    x = (screen_width/2) - (width/2)
+    y = (screen_height/2) - (height/2)
+    win.geometry('%dx%d+%d+%d' % (width, height, x, y))
+
+
+
+

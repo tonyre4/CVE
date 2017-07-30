@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
 from mysqlconnect import *
+from userData import *
 import tkMessageBox
 
 class pswdiag:
     def __init__(self,a,parent):
         self.parent= parent
+        self.parent.iconify()
         self.a=a
 
         self.top = Toplevel(self.parent) #Objeto dialog
@@ -34,11 +36,13 @@ class pswdiag:
 
         #focus
         self.eusr.focus()
+        CENTRE(self.top,300,150)
 
     def compare(self,*args):
-        if ( buscaDat( self.eusr.get() ) == self.epsw.get() , 'pass' ) and not None:
+        if ( buscaDat( self.eusr.get() , "pass" ) == self.epsw.get() ) and not None:
             tkMessageBox.showinfo("Acceso permitido", "Bienvenido")
             self.top.destroy()
+            self.parent.deiconify()
             self.a.inlog()
         else:
             tkMessageBox.showerror("Acceso denegado", "Usuario/contraseña incorrecto")
