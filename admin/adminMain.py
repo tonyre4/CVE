@@ -14,15 +14,15 @@ class adminMain:
         self.UD = userData()
         #Declaracion de la ventana
         self.root = Tk()
-        #self.root.iconify()
-        #self.admndcdiag()
+        self.root.iconify()##COMENTAR
+        self.admndcdiag()  ##COMENTAR
         self.root.title("egas - admin")
 
         #Dibujado de menus
         self.drawMenu()
 
         #Ejecutar el dialogo de password al iniciar
-        self.oppsw()
+        ##self.oppsw() #DESCOMENTAR
 
         #Se activa el loop para detectar eventos
         self.root.mainloop()
@@ -40,7 +40,6 @@ class adminMain:
         if not self.UD.logeado:
 
             self.cuentamenu.add_command(label="Iniciar sesión", command=self.oppsw)
-            #self.cuentamenu.add_command(label="Administrador de cuentas", command= self.admndcdiag)##QUITAR
             self.cuentamenu.add_command(label="Salir", command=self.close)
             self.ayudamenu.add_command(label="Acerca de...")
             self.ayudamenu.add_command(label="Tutoriales")

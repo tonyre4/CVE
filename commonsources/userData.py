@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from conectorbd import *
+from mysqlconnect import *
 
 class userData:
 
@@ -12,7 +12,7 @@ class userData:
     def defineUPL(self,usr,psw):
         self.usr = usr
         self.psw = psw
-        self.lvl = buscaLvl(self.usr)
+        self.lvl = buscaDat(self.usr,'level')
 
     def printall (self):
         print ("Logueado = ", self.logeado)
@@ -24,4 +24,4 @@ class userData:
         self.logeado = True
         self.usr = "admin"
         self.psw = "admin"
-        self.lvl = 511
+        self.lvl = 256
