@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
-from conectorbd import *
+from mysqlconnect import *
 import tkMessageBox
 
 class pswdiag:

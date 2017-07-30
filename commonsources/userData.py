@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from conectorbd import *
+from mysqlconnect import *
 
 class userData:
 
@@ -24,4 +24,4 @@ class userData:
         self.logeado = True
         self.usr = "admin"
         self.psw = "admin"
-        self.lvl = 2
+        self.lvl = 256

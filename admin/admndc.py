@@ -3,7 +3,7 @@ from Tkinter import *
 import ttk
 import tkMessageBox
 sys.path.append('../commonsources')
-from conectorbd import *
+from mysqlconnect import *
 
 class adminctas:
 
@@ -160,7 +160,6 @@ class adminctas:
     def getparms(self,*args):
         u=self.lusr.get()
         l='{0:09b}'.format(buscaDat(u,"level"))
-        print l
 
         self.usuchk.deselect()
         for i in range(0, self.q):
@@ -185,17 +184,13 @@ class adminctas:
         if r:
             if not self.subool: #CHECA CONTRASEÑA ACTUAL
                 if buscaDat(u,"pass")!=pa:
-                    print "La pass actual no cuadra"
                     tkMessageBox.showerror("Error de autenticación","La contraseña actual de la cuenta no es correcta")
                     return
             if not (pn=="" and pnc==""):
-                print "checando contraseñas"
                 if pn != pnc :
-                    print "las contraseñas no son iguales"
                     tkMessageBox.showerror("Error de confirmacion","Las contraseñas no coinciden")
                     return
                 else:
-                    print "Cambiando pass"
                     cambiaDat(u,"pass",pn)
 
             if l==0:
