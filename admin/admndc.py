@@ -3,7 +3,7 @@ from Tkinter import *
 import ttk
 import tkMessageBox
 sys.path.append('../commonsources')
-from mysqlconnect import *
+from CMmysqlconnect import *
 
 class adminctas:
 

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
 import tkMessageBox
+from admndc import *
 import sys
 sys.path.append('../commonsources')
-from pswDiag import *
-from userData import *
-from admndc import *
+from CMpswDiag import *
+from CMuserData import *
 
 class adminMain:
 

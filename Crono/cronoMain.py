@@ -3,20 +3,22 @@ from Tkinter import *
 import tkMessageBox
 import sys
 sys.path.append('../commonsources')
-from pswDiag import *
-from userData import *
+from CMpswDiag import *
+from CMuserData import *
 import ScrolledText
-from logTool import logO
-from eventExe import *
+from CMlogTool import logO
+from CMeventExe import *
 
 class cronoMain:
 
     def __init__(self):
         #objeto de usuario
         self.UD = userData()
+        #
+        self.CrBool= False
         #Objeto para ejecutar tareas
         self.ex= evExecuter()
-        self.ex.addEvt(self.hello,'0')
+        #self.ex.addEvt(self.hello,'0')
 
         #Declaracion de la ventana
         self.root = Tk()
@@ -25,7 +27,7 @@ class cronoMain:
 
         #Dibujado de menus
         self.drawMenu()
-        self.inlog()
+        #self.inlog() ##QUITAR
 
         #Dibuja ventana
         self.drawWin()
@@ -47,7 +49,33 @@ class cronoMain:
         self.logWin.pack(fill=X,side='bottom')
         self.log = logO(self.logWin) #objeto para loggear
 
-        #self.log.printlog("string") ##instruccion para imprimir en el log
+        self.log.printlog("Inicia sesión para activar el manejador de eventos") ##instruccion para imprimir en el log
+
+        #Widgets
+        self.CR = PhotoImage(file='cRed.png')
+        self.CG = PhotoImage(file='cGre.png')
+
+
+        self.Bcron = Button(self.root,text= 'Activar Crono', image= self.CR ,compound='top',command= self.Bconf)
+        self.Bcron.pack(side='top')
+
+    def Bconf(self):
+        if self.UD.logeado:
+            if self.CrBool:
+                txt = 'Desactivar Crono'
+                img = self.CG
+                self.CrBool = False
+            else:
+                txt = 'Activar Crono'
+                img = self.CR
+                self.CrBool = True
+        else:
+            txt = 'Activar Crono'
+            img = self.CR
+            self.oppsw()
+
+        self.Bcron["text"] = txt
+        self.Bcron["image"] = img
 
 
     def drawMenu(self):

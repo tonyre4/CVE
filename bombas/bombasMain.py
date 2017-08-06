@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
 sys.path.append('../commonsources')
-from conectorbd import *
+from CMconectorbd import *
 
 
 
