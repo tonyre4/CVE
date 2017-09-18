@@ -2,12 +2,15 @@
 from Tkinter import *
 import ttk
 import tkMessageBox
+##from admindb import *
 sys.path.append('../commonsources')
-from CMmysqlconnect import *
+from CMmysqlconnectV2 import *
 
 class adminctas:
 
     def __init__(self,parent,lvl):
+        self.dbtable = 'users'
+        self.dbname = 'IDs'
         self.parent = parent
         self.lvl = "{0:09b}".format(lvl)
         self.subool = False
@@ -153,11 +156,11 @@ class adminctas:
     ##############FUNCIONES DE CUENTA EXISTENTE
 
     def updl(self):
-        self.lusr['values'] = buscaDat(None,"user")
+        self.lusr['values'] = buscaDat(None,'',"user",self.dbtable,self.dbname)
 
     def getparms(self,*args):
         u=self.lusr.get()
-        l='{0:09b}'.format(buscaDat(u,"level"))
+        l='{0:09b}'.format(buscaDat(u,'user',"level",self.dbtable,self.dbname))
 
         self.usuchk.deselect()
         for i in range(0, self.q):
@@ -181,7 +184,7 @@ class adminctas:
 
         if r:
             if not self.subool: #CHECA CONTRASEÑA ACTUAL
-                if buscaDat(u,"pass")!=pa:
+                if buscaDat(u,'user',"pass",self.dbtable,self.dbname)!=pa:
                     tkMessageBox.showerror("Error de autenticación","La contraseña actual de la cuenta no es correcta")
                     return
             if not (pn=="" and pnc==""):
@@ -189,19 +192,19 @@ class adminctas:
                     tkMessageBox.showerror("Error de confirmacion","Las contraseñas no coinciden")
                     return
                 else:
-                    cambiaDat(u,"pass",pn)
+                    cambiaDat(u,'user',"pass",pn,self.dbtable,self.dbname)
 
             if l==0:
                 tkMessageBox.showerror("Error de permisos", "No se puede dejar una cuenta sin permisos")
             else:
-                cambiaDat(u,"level",l)
+                cambiaDat(u,'user',"level",l,self.dbtable,self.dbname)
 
     def delusr(self):
         u = self.lusr.get()
         if not u=="":
             r= tkMessageBox.askyesno("Borrado de cuenta","Estas seguro de borrar al usuario '%s'?" % u)
             if r:
-                borraDat(u)
+                borraDat(u,'user',self.dbtable,self.dbname)
 
 ##############################################################
 ##############################################################
@@ -238,9 +241,9 @@ class adminctas:
                 if self.chk.get():
                     yn = tkMessageBox.askquestion("Nuevo super usuario","¿Desea que el nuevo usuario tenga permisos de super usuario? (Un super usuario puede modificar todo tipo de registros)",icon='warning')
                     if yn=='yes':
-                        addusr(u,p,l)
+                        agregaDat(['user','pass','level'],[u,p,l],self.dbtable,self.dbname)
                 else:
-                    addusr(u, p, l)
+                    agregaDat(['user','pass','level'],[u,p,l],self.dbtable,self.dbname)
                 self.nuborrar(True)
             else:
                 tkMessageBox.showerror("Confirmacion de contraseña", "La confirmacion de contraseña no coincide o no se introdució una contraseña válida")

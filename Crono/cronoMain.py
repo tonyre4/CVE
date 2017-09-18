@@ -57,7 +57,7 @@ class cronoMain:
 
 
         self.Bcron = Button(self.root,text= 'Activar Crono', image= self.CR ,compound='top',command= self.Bconf)
-        self.Bcron.pack(side='top')
+        self.Bcron.pack(side= LEFT)
 
     def Bconf(self):
         if self.UD.logeado:

@@ -2,6 +2,7 @@
 from Tkinter import *
 import tkMessageBox
 from admndc import *
+from admndcl import *
 import sys
 sys.path.append('../commonsources')
 from CMpswDiag import *
@@ -15,7 +16,8 @@ class adminMain:
         #Declaracion de la ventana
         self.root = Tk()
         self.root.iconify()##COMENTAR
-        self.admndcdiag()  ##COMENTAR
+        #self.admndcdiag()  ##COMENTAR
+        self.admdclidiag() ##COMENTAR
         self.root.title("egas - admin")
 
         #Dibujado de menus
@@ -49,6 +51,7 @@ class adminMain:
         else:
             self.cuentamenu.add_command(label="Cerrar sesión", command=self.unlog)
             self.cuentamenu.add_command(label="Administrador de cuentas", command= self.admndcdiag)
+            self.cuentamenu.add_command(label="Administrador de clientes", command= self.admdclidiag)
             self.cuentamenu.add_command(label="Salir", command=self.close)
             self.ayudamenu.add_command(label="Acerca de...")
             self.ayudamenu.add_command(label="Tutoriales")
@@ -68,8 +71,12 @@ class adminMain:
         self.drawMenu()
 
     def admndcdiag(self):
-        self.UD.testing()
+        self.UD.testing() #COMENTAR
         b = adminctas(self.root,self.UD.lvl)
+
+    def admdclidiag(self):
+        self.UD.testing() #COMENTAR
+        b = adminclien(self.root,self.UD.lvl)
 
     def oppsw (self):
         self.root.iconify()

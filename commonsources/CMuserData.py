@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from CMmysqlconnect import *
+from CMmysqlconnectV2 import *
 
 class userData:
-
     def __init__(self):
         self.logeado = False
         self.usr = ""
@@ -12,7 +11,7 @@ class userData:
     def defineUPL(self,usr,psw):
         self.usr = usr
         self.psw = psw
-        self.lvl = buscaDat(self.usr,'level')
+        self.lvl = buscaDat(self.usr,'user','level','users','IDs')
 
     def printall (self):
         print ("Logueado = ", self.logeado)
@@ -25,9 +24,6 @@ class userData:
         self.usr = "admin"
         self.psw = "admin"
         self.lvl = 256
-
-
-from Tkinter import *
 
 
 def CENTRE(win,width=300, height=200):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from Tkinter import *
-from CMmysqlconnect import *
+from CMmysqlconnectV2 import *
 from CMuserData import *
 import tkMessageBox
 
@@ -39,7 +39,7 @@ class pswdiag:
         CENTRE(self.top,300,150)
 
     def compare(self,*args):
-        if ( buscaDat( self.eusr.get() , "pass" ) == self.epsw.get() ) and not None:
+        if ( buscaDat(self.eusr.get(),'user',"pass",'users','IDs') == self.epsw.get() ) and not None:
             tkMessageBox.showinfo("Acceso permitido", "Bienvenido")
             self.top.destroy()
             self.parent.deiconify()

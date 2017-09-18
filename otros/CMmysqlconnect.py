@@ -3,9 +3,9 @@ import MySQLdb as mdb
 import sys
 import tkMessageBox
 
-def transactionIn(inst):
+def transactionIn(inst,table):
     try:
-        con = mdb.connect('localhost', 'root', '85491278', 'IDs')
+        con = mdb.connect('localhost', 'root', '85491278', table)
         cur = con.cursor()
         cur.execute(inst)
         con.commit()
@@ -14,8 +14,8 @@ def transactionIn(inst):
     except mdb.Error, e:
         showError(e)
 
-def transactionOut(inst,list):
-    con = mdb.connect('localhost', 'root', '85491278', 'IDs')
+def transactionOut(inst,list,table):
+    con = mdb.connect('localhost', 'root', '85491278', table)
     try:
         with con:
             cur = con.cursor()
@@ -41,8 +41,7 @@ def showError(e):
     #sys.exit(1)
 
 
-
-def buscaDat(usr,par):
+def buscaDat(usr,par,server):
     if usr is not None:
         l=" WHERE user='%s';" % usr
         list=False
@@ -50,19 +49,19 @@ def buscaDat(usr,par):
         l=";"
         list=True
     inst = "SELECT %s FROM users" % par + l
-    return transactionOut(inst,list)
+    return transactionOut(inst,list,server)
 
-def cambiaDat(usr,par,ndat):
+def cambiaDat(usr,par,ndat,server):
     if type(ndat)==str:
         inst = "UPDATE users SET %s='%s' WHERE user='%s';" % (par,ndat,usr)
     else:
         inst = "UPDATE users SET %s= %d  WHERE user='%s';" % (par, ndat, usr)
-    transactionIn(inst)
+    transactionIn(inst,server)
 
-def borraDat(usr):
+def borraDat(usr,server):
     inst = "DELETE FROM users WHERE user='%s';" % usr
-    transactionIn(inst)
+    transactionIn(inst,server)
 
-def addusr(usr, psw, lvl):
+def addusr(usr, psw, lvl,server):
     inst = "INSERT INTO users (user,pass,level) VALUES ('%s','%s',%i);" % (usr,psw,lvl)
-    transactionIn(inst)
+    transactionIn(inst,server)
