@@ -5,6 +5,7 @@ from Tkinter import *
 # import tkMessageBox
 import re
 import tkMessageBox
+import ttk
 sys.path.append('../commonsources')
 from CMmysqlconnectV2 import *
 
@@ -37,7 +38,12 @@ class adminclien:
         self.ncNombre = Entry(self.lf1)
         vcmd[9] = 'RFC'
         self.ncRFC = Entry(self.lf1, validate="key", validatecommand=vcmd)
-        self.ncDir = Entry(self.lf1)
+        self.ncCalle = Entry(self.lf1)
+        vcmd[9] = 'num'
+        self.ncNumero = Entry(self.lf1, validate="key", validatecommand=vcmd)
+        self.ncColonia = Entry(self.lf1)
+        vcmd[9] = 'CP'
+        self.ncCP = Entry(self.lf1, validate="key", validatecommand=vcmd)
         vcmd[9] = 'tel'
         self.ncTel = Entry(self.lf1, validate="key", validatecommand=vcmd)
         vcmd[9] = 'email'
@@ -49,14 +55,20 @@ class adminclien:
         Label(self.lf1, text="(*) Campos obligatorios").grid(column=4, row=0)
         Label(self.lf1, text="Nombre *").grid(column=0, row=1)
         Label(self.lf1, text="RFC *").grid(column=3, row=1)
-        Label(self.lf1, text="Dirección *").grid(column=0, row=3)
+        Label(self.lf1, text="Calle").grid(column=0, row=3)
+        Label(self.lf1, text="Numero").grid(column=1, row=3)
+        Label(self.lf1, text="Colonia").grid(column=2, row=3)
+        Label(self.lf1, text="C.P.").grid(column=3, row=3)
         Label(self.lf1, text="Teléfono").grid(column=0, row=5)
         Label(self.lf1, text="Correo electrónico").grid(column=2, row=5)
 
         # Posicion de widgets
         self.ncNombre.grid(column=0, row=2, columnspan=2)
         self.ncRFC.grid(column=2, row=2, columnspan=2)
-        self.ncDir.grid(column=0, row=4, columnspan=4)
+        self.ncCalle.grid(column=0, row=4)
+        self.ncNumero.grid(column=1, row=4)
+        self.ncColonia.grid(column=2, row=4)
+        self.ncCP.grid(column=3, row=4)
         self.ncTel.grid(column=0, row=6)
         self.ncEmail.grid(column=2, row=6)
         self.nccrbtn.grid(column=4, row=7)
@@ -64,16 +76,90 @@ class adminclien:
 
         self.lf1.grid()
 
+        #Parte de Cliente existente
+        self.lf2 = LabelFrame(self.top, text="Cliente existente")
+
+        vcmd = [self.lf2.register(validador),
+                '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W','']
+        # Widgets
+        # Nombre,RFC,Direccion,Telefono,email
+        self.ceBuscar = Entry(self.lf2)
+        self.ceRes = ttk.Combobox(self.lf2)
+        ##initRadioButtons
+        self.radioB = LabelFrame(self.lf2, text="Buscar por:")
+        MODES = [
+            ("Nombre", "N"),
+            ("RFC", "R")
+        ]
+        self.v = StringVar()
+        self.v.set("N")  # initialize
+
+        for text, mode in MODES:
+            b = Radiobutton(self.radioB, text=text,
+                            variable=self.v, value=mode)
+            b.pack(anchor=W)
+        ##endRadioButtons
+        self.ceNombre = Entry(self.lf2)
+        vcmd[9] = 'RFC'
+        self.ceRFC = Entry(self.lf2, validate="key", validatecommand=vcmd)
+        self.ceCalle = Entry(self.lf2)
+        vcmd[9] = 'num'
+        self.ceNumero = Entry(self.lf2, validate="key", validatecommand=vcmd)
+        self.ceColonia = Entry(self.lf2)
+        vcmd[9] = 'CP'
+        self.ceCP = Entry(self.lf2, validate="key", validatecommand=vcmd)
+        vcmd[9] = 'tel'
+        self.ceTel = Entry(self.lf2, validate="key", validatecommand=vcmd)
+        vcmd[9] = 'email'
+        self.ceEmail = Entry(self.lf2, validate="key", validatecommand=vcmd)
+        self.cecrbtn = Button(self.lf2, text="Registrar", command=self.regcli)
+        self.ceclbtn = Button(self.lf2, text="Borrar campos")#, command=self.ceborrar)
+
+        #Binds
+        self.ceBuscar.bind("<Key>", self.searchPattern)
+
+        # Widgets constantes
+        Label(self.lf2, text="Resultados").grid(column=3, row=0)
+        Label(self.lf2, text="Buscar").grid(column=0, row=1)
+        Label(self.lf2, text="Nombre").grid(column=0, row=2)
+        Label(self.lf2, text="RFC").grid(column=3, row=2)
+        Label(self.lf2, text="Calle").grid(column=0, row=4)
+        Label(self.lf2, text="Numero").grid(column=1, row=4)
+        Label(self.lf2, text="Colonia").grid(column=2, row=4)
+        Label(self.lf2, text="C.P.").grid(column=3, row=4)
+        Label(self.lf2, text="Teléfono").grid(column=0, row=6)
+        Label(self.lf2, text="Correo electrónico").grid(column=2, row=6)
+
+        # Posicion de widgets
+        self.radioB.grid(column = 3, row = 1)
+        self.ceBuscar.grid(column=1, row=1)
+        self.ceRes.grid(column=3, row=1)
+        self.radioB.grid(column=4,row=1)
+        self.ceNombre.grid(column=0, row=3, columnspan=2)
+        self.ceRFC.grid(column=2, row=3, columnspan=2)
+        self.ceCalle.grid(column=0, row=5)
+        self.ceNumero.grid(column=1, row=5)
+        self.ceColonia.grid(column=2, row=5)
+        self.ceCP.grid(column=3, row=5)
+        self.ceTel.grid(column=0, row=7)
+        self.ceEmail.grid(column=2, row=7)
+        self.cecrbtn.grid(column=4, row=8)
+        self.ceclbtn.grid(column=3, row=8)
+
+        self.lf2.grid()
+
     def regcli(self):
         #Obtencion de los datos
         #Ismael Antonio Davila Rodriguez = 31
         #Jesus Guadalupe Portales Zuñiga = 31
-        #Benjamin Hernandez Flores
-        
+
         nombre = self.ncNombre.get()
         rfc = self.ncRFC.get()
         rfc = rfc.upper()
-        dir = self.ncDir.get()
+        calle = self.ncCalle.get()
+        num = self.ncNumero.get()
+        cp = self.ncCP.get()
+        col = self.ncColonia.get()
         tel = self.ncTel.get()
         email = self.ncEmail.get()
 
@@ -98,18 +184,35 @@ class adminclien:
                 tkMessageBox.showerror("Error al introducir datos", msg)
                 return
 
-        agregaDat(['nombre','rfc','dir','tel','email'],[nombre,rfc,dir,tel,email],'clients','IDs')
+        agregaDat(['nombre','rfc','calle','num','col','cp','tel','email'],[nombre,rfc,calle,num,col,cp,tel,email],'clients','IDs')
         tkMessageBox.showinfo('Datos validos','Cliente agregado a la base de datos')
         self.ncborrar()
 
+    def searchPattern(self,*args):
+        patt = self.ceBuscar.get()
+        v = self.v.get()
+        if v == 'N':
+            c = 'nombre'
+        if v == 'R':
+            c = 'rfc'
 
+        l = buscaDat(None,'',c,'clients','IDs')
+        lf = []
 
+        for e in l:
+            if e.find(patt)>-1:
+                lf.append(e)
+
+        self.ceRes['values'] = lf
 
 
     def ncborrar(self):
         self.ncNombre.delete(0,'end')
         self.ncRFC.delete(0,'end')
-        self.ncDir.delete(0,'end')
+        self.ncCalle.delete(0,'end')
+        self.ncNumero.delete(0,'end')
+        self.ncColonia.delete(0,'end')
+        self.ncCP.delete(0,'end')
         self.ncTel.delete(0,'end')
         self.ncEmail.delete(0,'end')
 
@@ -126,11 +229,13 @@ def validador(d, i, P, s, S, v, V, W,type):
 ##       print '#################################\n\n'
 # Disallow anything but lowercase letters
     if type=='RFC':
-        return vRFC(S, P)
+        return vOnlyLetters(S, P, 14, False)
     if type=='email':
         return vEmail(S,P)
     if type=='tel':
-        return vTel(S, P)
+        return vOnlyNums(S, P, 11)
+    if type=='CP' or type=='num':
+        return vOnlyNums(S, P, 6)
 
 def vEmail(S,P):
     allowed = ['@', '.', '_', '-']
@@ -160,16 +265,17 @@ def validRFC(e):
     else:
         return False
 
-def vTel(S, P):
+def vOnlyNums(S, P, s):
     nc = len(P)
-    if nc < 11:
+    if nc < s:
         if S.isdigit():
             return True
     return False
 
-def vRFC(S,P):
+def vOnlyLetters(S, P, s,space):
     nc = len(P)
-    if nc < 14:
-        if S.isdigit() or S.islower() or S.isupper():
+    if nc < s:
+        if S.isdigit() or S.islower() or S.isupper() or (space and S==' '):
             return True
+
     return False

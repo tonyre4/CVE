@@ -65,7 +65,7 @@ def cambiaDat(pattern, colpattern, column, newdata, table, database):
 
 ##Arreglar esto con otra funcion que saque el tipo de dato desde mysql
 def switchforstrings(column):
-    strtypes = ('user','pass','nombre','rfc','dir','tel','email')  ## AGREGAR AQUI TODOS LOS TIPOS DE DATOS QUE SERAN STRs
+    strtypes = ('user','pass','nombre','rfc','calle','num','cp','col','tel','email')  ## AGREGAR AQUI TODOS LOS TIPOS DE DATOS QUE SERAN STRs
     for t in strtypes:
         if column == t:
             return True
