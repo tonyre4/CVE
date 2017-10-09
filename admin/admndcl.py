@@ -83,16 +83,17 @@ class adminclien:
                 '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W','']
         # Widgets
         # Nombre,RFC,Direccion,Telefono,email
-        self.ceBuscar = Entry(self.lf2)
+        self.B = StringVar()
+        self.ceBuscar = Entry(self.lf2,textvariable = self.B)
         self.ceRes = ttk.Combobox(self.lf2)
         ##initRadioButtons
         self.radioB = LabelFrame(self.lf2, text="Buscar por:")
         MODES = [
-            ("Nombre", "N"),
-            ("RFC", "R")
+            ("Nombre", "nombre"),
+            ("RFC", "rfc")
         ]
         self.v = StringVar()
-        self.v.set("N")  # initialize
+        self.v.set("nombre")  # initialize
 
         for text, mode in MODES:
             b = Radiobutton(self.radioB, text=text,
@@ -116,7 +117,8 @@ class adminclien:
         self.ceclbtn = Button(self.lf2, text="Borrar campos")#, command=self.ceborrar)
 
         #Binds
-        self.ceBuscar.bind("<Key>", self.searchPattern)
+        self.ceRes.bind("<<ComboboxSelected>>", lambda x: self.searchPattern('box'))
+        self.ceBuscar.bind("<KeyRelease>", lambda x: self.searchPattern('key'))
 
         # Widgets constantes
         Label(self.lf2, text="Resultados").grid(column=3, row=0)
@@ -188,22 +190,65 @@ class adminclien:
         tkMessageBox.showinfo('Datos validos','Cliente agregado a la base de datos')
         self.ncborrar()
 
-    def searchPattern(self,*args):
-        patt = self.ceBuscar.get()
+    def searchPattern(self,event):
+        #Detecta el evento
         v = self.v.get()
-        if v == 'N':
-            c = 'nombre'
-        if v == 'R':
-            c = 'rfc'
+        up = True
+        if event=='box': #Si es seleccion del combobox
+            patt= self.ceRes.get()
 
-        l = buscaDat(None,'',c,'clients','IDs')
-        lf = []
+        else: #Si es por escribir en el buscador
+            patt = self.B.get()
+            l = buscaDat(None,'',v,'clients','IDs')  #Enlista todos los clientes, 'v' es para saber si es rfc o nombre
+            lf = []
 
-        for e in l:
-            if e.find(patt)>-1:
-                lf.append(e)
+            if patt == '': #Si no hay nada en la barra de busqueda los enlista todos
+                lf=l
+            else:   #Si no busca patrones dentro
+                for e in l:
+                    if e.find(patt)>-1:
+                        lf.append(e)
 
-        self.ceRes['values'] = lf
+            if lf: #Si hay una lista pone todas las que hicieron match y el primer valor lo escribe en el combobox
+                patt = lf[0]
+                self.ceRes['values'] = lf
+                self.ceRes.delete(0,'end')
+                self.ceRes.insert(0,lf[0])
+            else:
+                up= False
+                self.ceRes['values'] = []
+                self.ceRes.delete(0,'end')
+                self.ceRes.insert(0,'No hay resultados')
+
+
+
+        if up:
+            self.updvals(patt,v) #Para hacer update de los datos segun el patron final elegido
+
+    def updvals(self,patt,v):
+        self.ceborrar()#Borra lo que este dentro de los entrys
+
+        if v == 'nombre': #Si el dato es un nombre
+            self.ceNombre.insert(0, patt)
+            self.ceRFC.insert(0,buscaDat(patt,v,'rfc','clients','IDs'))
+        else: #Si es RFC
+            self.ceRFC.insert(0, patt)
+            self.ceNombre.insert(0,buscaDat(patt,v,'nombre','clients','IDs'))
+
+        names = ['calle','num','col','cp','tel','email']
+        data = []
+        for n in names:
+            data.append(buscaDat(patt,v,n,'clients','IDs'))
+        for d,dd in enumerate(data):
+            if not data[d]:
+                data[d] = ''
+
+        self.ceCalle.insert(0, data[0])
+        self.ceNumero.insert(0, data[1])
+        self.ceColonia.insert(0, data[2])
+        self.ceCP.insert(0,data[3])
+        self.ceTel.insert(0,data[4])
+        self.ceEmail.insert(0,data[5])
 
 
     def ncborrar(self):
@@ -216,17 +261,28 @@ class adminclien:
         self.ncTel.delete(0,'end')
         self.ncEmail.delete(0,'end')
 
+    def ceborrar(self):
+        self.ceNombre.delete(0,'end')
+        self.ceRFC.delete(0,'end')
+        self.ceCalle.delete(0,'end')
+        self.ceNumero.delete(0,'end')
+        self.ceColonia.delete(0,'end')
+        self.ceCP.delete(0,'end')
+        self.ceTel.delete(0,'end')
+        self.ceEmail.delete(0,'end')
+
 
 def validador(d, i, P, s, S, v, V, W,type):
-##       print "d='%s'\n" % d,
-##       print "i='%s'\n" % i,
-##       print "P='%s'\n" % P,
-##       print "s='%s'\n" % s,
-##       print "S='%s'\n" % S,
-##       print "v='%s'\n" % v,
-##       print "V='%s'\n" % V,
-##       print "W='%s'\n" % W,
-##       print '#################################\n\n'
+    print "d='%s'\n" % d,
+    print "i='%s'\n" % i,
+    print "P='%s'\n" % P, #Retorna la cadena completa
+    print "s='%s'\n" % s,
+    print "S='%s'\n" % S,
+    print "v='%s'\n" % v,
+    print "V='%s'\n" % V,
+    print "W='%s'\n" % W,
+    print type
+    print '#\n\n'
 # Disallow anything but lowercase letters
     if type=='RFC':
         return vOnlyLetters(S, P, 14, False)
@@ -236,6 +292,7 @@ def validador(d, i, P, s, S, v, V, W,type):
         return vOnlyNums(S, P, 11)
     if type=='CP' or type=='num':
         return vOnlyNums(S, P, 6)
+    return True
 
 def vEmail(S,P):
     allowed = ['@', '.', '_', '-']
